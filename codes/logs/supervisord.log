@@ -1,0 +1,37 @@
+2017-05-30 14:35:05,920 CRIT Supervisor running as root (no user in config file)
+2017-05-30 14:35:05,921 INFO Included extra file "/etc/supervisor/flask.conf" during parsing
+2017-05-30 14:35:05,922 INFO Included extra file "/etc/supervisor/mainloop.conf" during parsing
+2017-05-30 14:35:05,941 INFO RPC interface 'supervisor' initialized
+2017-05-30 14:35:05,942 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+2017-05-30 14:35:05,944 INFO daemonizing the supervisord process
+2017-05-30 14:35:05,948 INFO supervisord started with pid 9
+2017-05-30 14:35:06,956 INFO spawned: 'flask' with pid 11
+2017-05-30 14:35:06,964 INFO spawned: 'mainloop' with pid 12
+2017-05-30 14:35:12,437 INFO success: flask entered RUNNING state, process has stayed up for > than 5 seconds (startsecs)
+2017-05-30 14:35:12,438 INFO success: mainloop entered RUNNING state, process has stayed up for > than 5 seconds (startsecs)
+2017-05-30 15:27:06,044 CRIT Supervisor running as root (no user in config file)
+2017-05-30 15:27:06,048 INFO Included extra file "/etc/supervisor/flask.conf" during parsing
+2017-05-30 15:27:06,049 INFO Included extra file "/etc/supervisor/mainloop.conf" during parsing
+2017-05-30 15:27:06,372 INFO RPC interface 'supervisor' initialized
+2017-05-30 15:27:06,574 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+2017-05-30 15:27:06,575 INFO daemonizing the supervisord process
+2017-05-30 15:27:06,578 INFO supervisord started with pid 8
+2017-05-30 15:27:07,594 INFO spawned: 'flask' with pid 10
+2017-05-30 15:27:07,603 INFO spawned: 'mainloop' with pid 11
+2017-05-30 15:27:13,268 INFO success: flask entered RUNNING state, process has stayed up for > than 5 seconds (startsecs)
+2017-05-30 15:27:13,269 INFO success: mainloop entered RUNNING state, process has stayed up for > than 5 seconds (startsecs)
+2017-05-30 15:28:07,440 CRIT Supervisor running as root (no user in config file)
+2017-05-30 15:28:07,453 INFO Included extra file "/etc/supervisor/flask.conf" during parsing
+2017-05-30 15:28:07,454 INFO Included extra file "/etc/supervisor/mainloop.conf" during parsing
+2017-05-30 15:28:07,779 INFO RPC interface 'supervisor' initialized
+2017-05-30 15:28:07,781 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+2017-05-30 15:28:07,787 INFO daemonizing the supervisord process
+2017-05-30 15:28:07,794 INFO supervisord started with pid 8
+2017-05-30 15:28:08,802 INFO spawned: 'flask' with pid 10
+2017-05-30 15:28:08,824 INFO spawned: 'mainloop' with pid 11
+2017-05-30 15:28:13,926 INFO success: flask entered RUNNING state, process has stayed up for > than 5 seconds (startsecs)
+2017-05-30 15:28:13,928 INFO success: mainloop entered RUNNING state, process has stayed up for > than 5 seconds (startsecs)
+2017-05-30 15:28:34,157 INFO waiting for flask to stop
+2017-05-30 15:28:34,158 INFO waiting for mainloop to stop
+2017-05-30 15:28:34,162 INFO stopped: flask (terminated by SIGTERM)
+2017-05-30 15:28:34,163 INFO stopped: mainloop (terminated by SIGTERM)

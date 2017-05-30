@@ -1,0 +1,19 @@
+scrapy:
+    build: . 
+    volumes:
+        - "./codes:/usr/local/code"
+    links:
+        - "mongo"
+    # command: /usr/local/bin/supervisord -c /etc/supervisord.conf -u root 
+    # command: /bin/bash
+    expose:
+        - "5000"
+    tty: true
+
+mongo:
+    image: mongo
+    ports:
+        - "27017:27017"
+    volumes:
+        - ./data/configdb:/data/configdb
+        - ./data/db:/data/db

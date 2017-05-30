@@ -1,0 +1,4 @@
+supervisor
+flask
+pymongo
+requests
