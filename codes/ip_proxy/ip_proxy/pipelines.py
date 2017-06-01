@@ -24,7 +24,7 @@ class IpProxyPipeline(object):
         logging.debug("insert One")
         db.update_one({"update_at": item["last_update"]}, {"$set": dict(item)}, upsert=True)
 
-        return item
+        # return item
 
     def close_spider(self, spider):
         logging.debug("Close Mongo")

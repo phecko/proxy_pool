@@ -7,4 +7,7 @@ COPY supervisord.conf /etc/supervisord.conf
 COPY supervisor/ /etc/supervisor/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
+VOLUME /data/logs
+
+
 ENTRYPOINT ["/docker-entrypoint.sh"]

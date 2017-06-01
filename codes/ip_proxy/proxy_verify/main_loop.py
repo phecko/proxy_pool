@@ -15,7 +15,7 @@ from scrapy.settings import Settings
 import ip_proxy.settings as spider_settings
 from scrapy.crawler import CrawlerProcess
 
-mongo_settings = ["localhost",27017]
+mongo_settings = ["mongo",27017]
 
 class MainLoop(object):
     verifier_manager = None

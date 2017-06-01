@@ -21,6 +21,7 @@ class ScheduleManager(object):
         natures = col.find(limit=count)
         natures = [ v for v in natures]
         if not natures or len(natures) <= 0:
+            self.readLock.release()
             return None
         # ids = [v[u"_id"] for v in natures]
         for v in natures:

@@ -1,13 +1,13 @@
 scrapy:
     build: . 
     volumes:
-        - "./codes:/usr/local/code"
+        - ./codes:/usr/local/code
+        - ./logs:/data/logs
+
     links:
         - "mongo"
-    # command: /usr/local/bin/supervisord -c /etc/supervisord.conf -u root 
-    # command: /bin/bash
-    expose:
-        - "5000"
+    ports:
+        - "5000:5000"
     tty: true
 
 mongo:
