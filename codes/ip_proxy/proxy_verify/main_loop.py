@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
+import json
+import logging
 
 from proxy_verify.verifier_manager import VerifierManager
 from proxy_verify.schedule_manager import ScheduleManager
 import multiprocessing
 import time
 import os
-
-
 from ip_proxy.spiders.xicidaili import XicidailiSpider
 from proxy_verify.settings import settings
-# from scrapy import signals,log
-# from twisted.internet import  reactor
-# from scrapy.crawler import Crawler
 from scrapy.settings import Settings
 import ip_proxy.settings as spider_settings
 from scrapy.crawler import CrawlerProcess
+from proxy_verify.utils import load_object
 
 
 
 class MainLoop(object):
     verifier_manager = None
     schedule_manager = None
+
+    # cache spiders status
+    spiders_signals = {}
 
     def __init__(self):
         self.verifier_manager = VerifierManager()
@@ -42,6 +43,14 @@ class MainLoop(object):
             print "finish one"
             time.sleep(5)
 
+    def load_spiders_settings(self):
+        file_path = os.path.join(os.path.join(os.path.dirname(__file__), "spiders.json"))
+        try:
+            with open(file_path,"r") as f:
+                return json.load(f)
+        except :
+            return {}
+
     def run_scrapy(self):
 
         while(True):
@@ -51,10 +60,27 @@ class MainLoop(object):
             print cur_path
 
             # os.system()
-            self.run_scrapy_spider(XicidailiSpider)
+            spiders_setting = self.load_spiders_settings()
 
-            print "sleep a day"
-            time.sleep(86400)
+            cur_time = time.time()
+            for spider_path,delta in spiders_setting.items():
+                if spider_path in self.spiders_signals:
+                    if self.spiders_signals[spider_path][0]:
+                        # last spider is not finished,pass
+                        continue
+                    elif cur_time - self.spiders_signals[spider_path][1] < spider_settings[spider_path]:
+                        # smaller than time step
+                        continue
+                try:
+                    spider_cls = load_object(spider_path)
+                    self.spiders_signals[spider_path] = [True,cur_time]
+                    self.run_scrapy_spider(spider_cls)
+                except Exception as e:
+                    # if start spider fail ,just continue
+                    logging.error(e)
+                    continue
+
+            time.sleep(10)
 
     def run_scrapy_spider(self,spider_cls):
         SpiderSettings = Settings()
@@ -64,6 +90,10 @@ class MainLoop(object):
         process = CrawlerProcess(settings=SpiderSettings)
         process.crawl(spider_cls)
         process.start()
+
+        defered = process.join()
+        print "finish"
+        print defered
 
 
     def run(self):
