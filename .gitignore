@@ -3,4 +3,5 @@
 data
 */.idea
 logs
+*/.idea/*
 *.pyc

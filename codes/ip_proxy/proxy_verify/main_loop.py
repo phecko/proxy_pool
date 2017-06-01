@@ -8,6 +8,7 @@ import os
 
 
 from ip_proxy.spiders.xicidaili import XicidailiSpider
+from proxy_verify.settings import settings
 # from scrapy import signals,log
 # from twisted.internet import  reactor
 # from scrapy.crawler import Crawler
@@ -15,7 +16,6 @@ from scrapy.settings import Settings
 import ip_proxy.settings as spider_settings
 from scrapy.crawler import CrawlerProcess
 
-mongo_settings = ["mongo",27017]
 
 class MainLoop(object):
     verifier_manager = None
@@ -23,7 +23,7 @@ class MainLoop(object):
 
     def __init__(self):
         self.verifier_manager = VerifierManager()
-        self.schedule_manager = ScheduleManager(mongo_settings[0],mongo_settings[1])
+        self.schedule_manager = ScheduleManager(settings["MONGO_HOST"],settings["MONGO_PORT"])
 
 
     def run_verify(self):
@@ -56,11 +56,11 @@ class MainLoop(object):
             time.sleep(86400)
 
     def run_scrapy_spider(self,spider_cls):
-        settings = Settings()
-        settings.setmodule(spider_settings)
-        settings.set("MONGO_HOST",mongo_settings[0])
-        settings.set("MONGO_PORT",mongo_settings[1])
-        process = CrawlerProcess(settings=settings)
+        SpiderSettings = Settings()
+        SpiderSettings.setmodule(spider_settings)
+        SpiderSettings.set("MONGO_HOST",settings["MONGO_HOST"])
+        SpiderSettings.set("MONGO_PORT",settings["MONGO_PORT"])
+        process = CrawlerProcess(settings=SpiderSettings)
         process.crawl(spider_cls)
         process.start()
 
