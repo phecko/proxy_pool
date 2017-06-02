@@ -19,14 +19,14 @@ from scrapy.crawler import Crawler
 
 
 
-
 class MainLoop(object):
     verifier_manager = None
     schedule_manager = None
 
     # cache spiders status
-    spiders_signals = {}
+
     crawl_process = None
+    spiders_status = {}
 
     def __init__(self):
         self.verifier_manager = VerifierManager()
@@ -57,7 +57,6 @@ class MainLoop(object):
             return {}
 
     def run_scrapy(self):
-
         while(True):
             print "start crawl proxy"
 
@@ -68,20 +67,24 @@ class MainLoop(object):
             spiders_setting = self.load_spiders_settings()
 
             cur_time = time.time()
+            spider_processes = []
             for spider_path,delta in spiders_setting.items():
-                if spider_path in self.spiders_signals:
-                    print "check spider:",spider_path, delta, cur_time - self.spiders_signals[spider_path][1],self.spiders_signals[spider_path]
+                if spider_path in self.spiders_status:
+                    print "check spider:",spider_path, delta, cur_time - self.spiders_status[spider_path][1],self.spiders_status[spider_path]
 
-                    if self.spiders_signals[spider_path][0]:
+                    if self.spiders_status[spider_path][0]:
                         # last spider is not finished,pass
                         continue
-                    elif cur_time - self.spiders_signals[spider_path][1] < delta:
+                    elif cur_time - self.spiders_status[spider_path][1] < delta:
                         # smaller than time step
                         continue
                 try:
                     spider_cls = load_object(spider_path)
-                    self.spiders_signals[spider_path] = [True,cur_time]
+                    self.spiders_status[spider_path] = [True,cur_time]
+                    # self.run_scrapy_spider(spider_cls,spider_path)
+
                     self.run_scrapy_spider(spider_cls,spider_path)
+
                 except Exception as e:
                     # if start spider fail ,just continue
                     logging.error(e)
@@ -92,30 +95,44 @@ class MainLoop(object):
 
     def run_scrapy_spider(self,spider_cls,spider_path):
         print "start crawl proxy: %s" % spider_path
-        if not self.crawl_process:
+
+        pipes = multiprocessing.Pipe()
+
+
+        def spider_finish_callback(result, spider_path,pipe):
+            print "spider callback %s" % spider_path
+            # if spider_path in self.spiders_status:
+            #     self.spiders_status[spider_path] = [False,self.spiders_status[spider_path][1]]
+            #     print self.spiders_status
+            # self.crawl_process.stop()
+            pipe.send(1)
+
+        def spider_err_callback(err, spider_path,pipe):
+            # print err,spider_path
+            # if spider_path in self.spiders_status:
+            #     self.spiders_status[spider_path] = [False,self.spiders_status[spider_path][1]]
+            # self.crawl_process.stop()
+            pipe.send(1)
+
+        def run_spider(pipe):
             SpiderSettings = Settings()
             SpiderSettings.setmodule(spider_settings)
-            SpiderSettings.set("MONGO_HOST",settings["MONGO_HOST"])
-            SpiderSettings.set("MONGO_PORT",settings["MONGO_PORT"])
-            self.crawl_process = CrawlerProcess(settings=SpiderSettings)
-        self.crawl_process.crawl(spider_cls)
-        self.crawl_process.start()
+            SpiderSettings.set("MONGO_HOST", settings["MONGO_HOST"])
+            SpiderSettings.set("MONGO_PORT", settings["MONGO_PORT"])
+            crawl_process = CrawlerProcess(settings=SpiderSettings)
+            crawl_process.crawl(spider_cls)
+            crawl_process.start()
+            deferred = crawl_process.join()
+            deferred.addCallback(spider_finish_callback,spider_path,pipe)
+            deferred.addErrback(spider_err_callback,spider_path,pipe)
 
-        def spider_finish_callback(result, spider_path):
-            print "spider callback %s" % spider_path
-            if spider_path in self.spiders_signals:
-                self.spiders_signals[spider_path][0] = False
-            # self.crawl_process.stop()
+        p = multiprocessing.Process(target=run_spider,args=(pipes[0],))
+        p.start()
+        print "process is started"
+        # flag = pipes[1].recv()
+        # if flag and spider_path in self.spiders_status:
+        #     self.spiders_status[spider_path][0] = False
 
-        def spider_err_callback(err, spider_path):
-            print err,spider_path
-            if spider_path in self.spiders_signals:
-                self.spiders_signals[spider_path][0] = False
-            # self.crawl_process.stop()
-
-        deferred = self.crawl_process.crawl(spider_cls)
-        deferred.addCallback(spider_finish_callback,spider_path)
-        deferred.addErrback(spider_err_callback,spider_path)
 
 
     def run(self):
