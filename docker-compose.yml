@@ -6,6 +6,8 @@ scrapy:
 
     links:
         - "mongo"
+    environment:
+        - PROXY_POOL_ENV=product
     ports:
         - "5000:5000"
     tty: true

@@ -41,6 +41,6 @@ class XicidailiSpider(scrapy.Spider):
 
         if next_page :
             next_page = urlparse.urljoin(response.url,next_page)
-            yield scrapy.Request(next_page)
+            # yield scrapy.Request(next_page)
 
         pass
