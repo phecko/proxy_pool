@@ -1,5 +1,3 @@
 {
-  "ip_proxy.spiders.xicidaili.XicidailiSpider" : 8,
-  "ip_proxy.spiders.xicidaili2.XicidailiSpider2" : 8,
-  "ip_proxy.spiders.xicidaili3.XicidailiSpider3" : 8
+  "ip_proxy.spiders.xicidaili.XicidailiSpider" : 86400
 }

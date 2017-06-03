@@ -34,8 +34,11 @@ class VerifierManager(object):
         useful = []
         useless = []
 
+        if len(self.verifiers) <= 0:
+            return proxys,[]
+
         for pl in proxys_list:
-            verifier = self.verifiers[0]
+            verifier = self.verifiers[random.randint(0,len(self.verifiers)-1)]
             results = verifier.verify_proxy_list(pl)
             for r in results:
                 if r[0]==True:
